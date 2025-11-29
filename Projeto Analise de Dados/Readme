@@ -1,0 +1,180 @@
+📘 README – Projeto IoT para Monitoramento do Solo e Predição Agrícola
+
+🌱 IoT Agro – Sistema de Monitoramento do Solo e Predição de Produtividade
+ESP32 • Flask API • MySQL • Dashboard • Análises Estatísticas • Machine Learning
+
+📌 📖 Sobre o Projeto
+
+Este projeto implementa um ecossistema completo de Agricultura 4.0 utilizando IoT, análise estatística e aprendizado de máquina.
+
+Ele é composto por:
+
+-> Coleta de dados com ESP32 + sensores (ou dados simulados)
+-> Recepção e armazenamento via API Flask
+-> Persistência em MySQL
+-> Dashboard web com Chart.js
+-> Scripts Python de correlação, regressões, ANOVA e ML
+-> Modelo preditivo de produtividade agrícola
+
+O repositório inclui todo o backend, códigos embarcados, dashboards e documentação.
+
+
+🚀 Funcionalidades Principais
+
+✔ Monitoramento de solo (pH, umidade, EC, NPK, temperatura)
+✔ Monitoramento ambiental (radiação solar, UV, vento, chuva)
+✔ Variáveis de planta (LAI, biomassa, altura)
+✔ Suporte a leituras físicas ou simuladas
+✔ Envio de dados via JSON
+✔ API REST para armazenamento e consulta
+✔ Dashboard com visualização em tempo real
+✔ Análises estatísticas automatizadas (Pearson, regressão, ANOVA)
+✔ Machine Learning para prever produtividade (kg)
+✔ Exportação de resultados em CSV e gráficos
+
+📂 Estrutura do Repositório
+
+📦 projeto-iot-solo
+ ┣ 📁 esp32/                # Código do ESP32 (simulação ou sensores reais)
+ ┣ 📁 api/                  # API Flask + rotas + conexão MySQL
+ ┣ 📁 dashboard/            # Dashboard com Flask + Chart.js
+ ┣ 📁 analise/              # Scripts de estatística e ML
+ ┣ 📁 modelos/              # Modelos treinados (pkl)
+ ┣ 📁 docs/                 # Documentação, diagramas, relatórios
+ ┣ README.md                # Este documento
+ ┣ requirements.txt         # Dependências do Python
+ ┗ LICENSE                  # Licença MIT
+
+
+📡 Instalação – Backend (API & Dashboard)
+1️⃣ Clone o repositório
+
+git clone https://github.com/seu-usuario/projeto-iot-solo.git
+cd projeto-iot-solo
+
+2️⃣ Crie um ambiente virtual
+
+python -m venv venv
+source venv/bin/activate   # Linux/macOS
+venv\Scripts\activate      # Windows
+
+3️⃣ Instale as dependências
+
+pip install -r requirements.txt
+
+4️⃣ Configure o banco MySQL
+Crie o banco:
+CREATE DATABASE iot_db;
+
+🔧 Executando a API
+Dentro da pasta api/:
+
+python app.py
+
+A API estará disponível em:
+http://localhost:5000/api/solo
+
+🛰 Executando o Dashboard
+
+Dentro da pasta dashboard/:
+python dashboard.py
+
+Acesse:
+http://localhost:5001
+
+🔌 ESP32 – Código (Simulação ou Sensores Reais)
+
+A pasta esp32/ contém:
+✔ simulacao.ino
+
+➡ Gera dados randômicos para todos os sensores.
+
+✔ sensores_reais.ino
+
+➡ Para usar sensores:
+
+✔ DS18B20 (temperatura)
+✔ BME280/BMP280
+✔ Sensor de pH analógico
+✔ EC (condutividade)
+✔ Módulo NPK capacitivo
+✔ Pluviômetro reed-switch
+✔ Anemômetro
+
+📊 Análises Estatísticas
+
+A pasta analise/ contém scripts completos.
+
+📌 Executar correlação de Pearson
+python correlacao.py
+
+📌 Regressão múltipla (Random Forest)
+python regressao_multipla.py
+
+📌 ANOVA
+python anova.py
+
+Todos os relatórios são salvos em /docs/resultados/.
+
+
+🧠 Machine Learning – Predição de Produtividade
+
+O script treina modelos baseados nas variáveis coletadas:
+
+✔ Random Forest
+✔ Linear Regression
+✔ Regressão múltipla
+✔ Normalização com StandardScaler
+
+📌 Treinar modelo:
+python modelo_producao.py
+
+📌 Resultado:
+
+✔ modelos/modelo_producao.pkl
+✔ Gráficos de importância de variáveis
+✔ Métricas (MAE, RMSE, R²)
+
+📈 Dashboard Web – Visualização em Tempo Real
+
+Mostra:
+
+✔ Gráficos de solo
+✔ Gráficos ambientais
+✔ Crescimento da planta
+✔ Mapas geográficos (latitude/longitude)
+✔ Séries históricas
+✔ Produção estimada
+
+📌 Baseado em Flask + Chart.js
+📌 Compatível com qualquer navegador
+
+🧪 Como Testar sem o ESP32
+
+Você pode enviar dados simulados com:
+python popular_simulado.py
+
+Esse script preenche o banco automaticamente para:
+
+✔ Testar correlação
+✔ Treinar modelos
+✔ Geração de gráficos
+✔ Avaliação do dashboard
+
+📜 Licença
+Este projeto é distribuído sob a licença MIT.
+
+🙋‍♂️ Autor
+
+Wellington Roque
+Professor – Desenvolvimento de Software Multiplataforma
+FATEC Indaiatuba
+🚀 Apaixonado por IoT, Web e Machine Learning
+
+⭐ Gostou do projeto?
+
+Se este repositório te ajudou:
+
+👉 Deixe uma ⭐ no GitHub
+👉 Compartilhe com outros desenvolvedores
+👉 Contribuições são bem-vindas!
