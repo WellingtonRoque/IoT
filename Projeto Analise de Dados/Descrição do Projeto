@@ -1,0 +1,736 @@
+Projeto de analise de dados do solo
+
+✅ PARTE 1 — Nova Tabela Completa (dados_solo) com TODOS os parâmetros
+
+Incluí todos os sensores e dados agrícolas adicionais:
+Sensores de Solo
+  •	temperatura_solo
+  •	umidade_solo
+  •	condutividade_solo
+  •	ph
+  •	npk_n
+  •	npk_p
+  •	npk_k
+
+Sensores Ambientais
+  •	temperatura_ar
+  •	pressao
+  •	altitude
+  •	umidade_relativa
+  •	radiacao_solar
+  •	indice_uv
+  •	velocidade_vento
+  •	pluviometria_mm
+
+Dados da Planta
+  •	altura_planta
+  •	biomassa_estimada
+  •	area_foliar_lai
+
+Localização
+  •	latitude
+  •	longitude
+
+Dados Agrícolas
+  •	cultura
+  •	estagio_fenologico (foreign key)
+  •	data_plantio
+  •	data_observacao
+
+Produção
+  •	producao_kg
+
+📌 SQL — Criação da Tabela dados_solo
+
+CREATE TABLE dados_solo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    -- Localização
+    latitude FLOAT,
+    longitude FLOAT,
+
+    -- Solo
+    temperatura_solo FLOAT,
+    umidade_solo FLOAT,
+    condutividade_solo FLOAT,
+    ph FLOAT,
+    npk_n FLOAT,
+    npk_p FLOAT,
+    npk_k FLOAT,
+
+    -- Atmosfera
+    temperatura_ar FLOAT,
+    pressao FLOAT,
+    altitude FLOAT,
+    umidade_relativa FLOAT,
+    radiacao_solar FLOAT,
+    indice_uv FLOAT,
+    velocidade_vento FLOAT,
+    pluviometria_mm FLOAT,
+
+    -- Planta
+    altura_planta FLOAT,
+    biomassa_estimada FLOAT,
+    area_foliar_lai FLOAT,
+
+    -- Dados agrícolas
+    cultura VARCHAR(50),
+    estagio_fenologico VARCHAR(50),
+    data_plantio DATE,
+    data_observacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    -- Produção
+    producao_kg FLOAT NULL
+);
+
+
+✅ PARTE 2 — Tabela de Estágios das Culturas
+
+Essa tabela permite estruturar informações sobre os estágios fenológicos.
+📌 SQL — Criação da Tabela estagios_culturas
+
+CREATE TABLE estagios_culturas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cultura VARCHAR(50) NOT NULL,
+    codigo_estagio VARCHAR(10) NOT NULL,
+    descricao VARCHAR(255) NOT NULL
+);
+
+📌 Inserção dos estágios da soja (exemplo completo)
+INSERT INTO estagios_culturas (cultura, codigo_estagio, descricao) VALUES
+('Soja', 'V0', 'Emergência'),
+('Soja', 'V1', '1ª folha trifoliolada'),
+('Soja', 'V2', '2ª folha trifoliolada'),
+('Soja', 'V3', '3ª folha trifoliolada'),
+('Soja', 'V4', '4ª folha trifoliolada'),
+('Soja', 'R1', 'Início da floração'),
+('Soja', 'R2', 'Floração plena'),
+('Soja', 'R3', 'Formação de vagens'),
+('Soja', 'R4', 'Enchimento de vagens'),
+('Soja', 'R5', 'Enchimento de grãos'),
+('Soja', 'R6', 'Grão cheio'),
+('Soja', 'R7', 'Pré-colheita'),
+('Soja', 'R8', 'Colheita');
+
+
+✅ PARTE 3 — Código do ESP32 (simulação com valores randômicos)
+
+O ESP32 vai enviar todos os parâmetros via JSON para a API Flask.
+📌 Esse código é funcional para simulação. Depois basta substituir pelos sensores reais.
+
+📜 ESP32 — Código Completo
+
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+const char* ssid = "SEU_WIFI";
+const char* password = "SUA_SENHA";
+
+const char* serverName = "http://SEU_IP:5000/api/solo";
+
+// Função para gerar valores randômicos float
+float randFloat(float minVal, float maxVal) {
+  return minVal + (float)random(0, 10000) / 10000.0 * (maxVal - minVal);
+}
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+
+  Serial.println("Conectando ao Wi-Fi...");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+
+  Serial.println("Wi-Fi conectado!");
+}
+
+void loop() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+
+    http.begin(serverName);
+    http.addHeader("Content-Type", "application/json");
+
+    // Simulação dos dados
+    String json = "{";
+    json += "\"latitude\":" + String(randFloat(-23.0, -22.0)) + ",";
+    json += "\"longitude\":" + String(randFloat(-47.0, -46.0)) + ",";
+
+    json += "\"temperatura_solo\":" + String(randFloat(18, 30)) + ",";
+    json += "\"umidade_solo\":" + String(randFloat(10, 50)) + ",";
+    json += "\"condutividade_solo\":" + String(randFloat(0.1, 1.5)) + ",";
+    json += "\"ph\":" + String(randFloat(5.0, 7.5)) + ",";
+    json += "\"npk_n\":" + String(randFloat(20, 70)) + ",";
+    json += "\"npk_p\":" + String(randFloat(10, 40)) + ",";
+    json += "\"npk_k\":" + String(randFloat(20, 60)) + ",";
+
+    json += "\"temperatura_ar\":" + String(randFloat(15, 35)) + ",";
+    json += "\"pressao\":" + String(randFloat(950, 1050)) + ",";
+    json += "\"altitude\":" + String(randFloat(500, 800)) + ",";
+    json += "\"umidade_relativa\":" + String(randFloat(40, 90)) + ",";
+    json += "\"radiacao_solar\":" + String(randFloat(200, 1200)) + ",";
+    json += "\"indice_uv\":" + String(randFloat(1, 11)) + ",";
+    json += "\"velocidade_vento\":" + String(randFloat(0, 15)) + ",";
+    json += "\"pluviometria_mm\":" + String(randFloat(0, 20)) + ",";
+
+    json += "\"altura_planta\":" + String(randFloat(5, 120)) + ",";
+    json += "\"biomassa_estimada\":" + String(randFloat(0.1, 5.0)) + ",";
+    json += "\"area_foliar_lai\":" + String(randFloat(1.0, 6.0)) + ",";
+
+    json += "\"cultura\":\"Soja\",";
+    json += "\"estagio_fenologico\":\"V3\",";
+    json += "\"data_plantio\":\"2025-01-10\"";
+
+    json += "}";
+
+    int resposta = http.POST(json);
+
+    Serial.println("Enviando dados...");
+    Serial.println(json);
+    Serial.println("Resposta HTTP: " + String(resposta));
+
+    http.end();
+  }
+
+  delay(60000); // envia a cada 60 segundos
+}
+
+✅ PARTE 4 — API Flask Atualizada para Receber TODOS os Campos
+
+Aqui está a rota /api/solo já adaptada para inserir tudo no MySQL.
+
+📜 Flask API — Código Completo
+
+from flask import Flask, request, jsonify
+import MySQLdb
+
+app = Flask(__name__)
+
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'usuario'
+app.config['MYSQL_PASSWORD'] = 'senha'
+app.config['MYSQL_DB'] = 'iot_db'
+
+db = MySQLdb.connect(
+    host=app.config['MYSQL_HOST'],
+    user=app.config['MYSQL_USER'],
+    passwd=app.config['MYSQL_PASSWORD'],
+    db=app.config['MYSQL_DB']
+)
+
+@app.route('/api/solo', methods=['POST'])
+def receber_dados():
+    data = request.get_json()
+
+    try:
+        cursor = db.cursor()
+
+        query = """
+            INSERT INTO dados_solo (
+                latitude, longitude,
+                temperatura_solo, umidade_solo, condutividade_solo, ph,
+                npk_n, npk_p, npk_k,
+                temperatura_ar, pressao, altitude, umidade_relativa,
+                radiacao_solar, indice_uv, velocidade_vento, pluviometria_mm,
+                altura_planta, biomassa_estimada, area_foliar_lai,
+                cultura, estagio_fenologico, data_plantio
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                      %s, %s, %s, %s, %s, %s, %s, %s,
+                      %s, %s, %s, %s, %s, %s)
+        """
+
+        values = (
+            data['latitude'], data['longitude'],
+            data['temperatura_solo'], data['umidade_solo'], data['condutividade_solo'], data['ph'],
+            data['npk_n'], data['npk_p'], data['npk_k'],
+            data['temperatura_ar'], data['pressao'], data['altitude'], data['umidade_relativa'],
+            data['radiacao_solar'], data['indice_uv'], data['velocidade_vento'], data['pluviometria_mm'],
+            data['altura_planta'], data['biomassa_estimada'], data['area_foliar_lai'],
+            data['cultura'], data['estagio_fenologico'], data['data_plantio']
+        )
+
+        cursor.execute(query, values)
+        db.commit()
+
+        return jsonify({"status": "ok", "mensagem": "Dados inseridos com sucesso."}), 200
+
+    except Exception as e:
+        print("Erro API:", e)
+        return jsonify({"status": "erro", "mensagem": str(e)}), 500
+
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
+
+
+👉 Próximos passos a seguir
+
+🔹1 - Script SQL com dados simulados
+🔹2 - Rotina Python para buscar o banco e calcular:
+    •	correlação de Pearson
+    •	regressão linear
+    •	regressão múltipla
+    •	análise de variância (ANOVA)
+🔹3 - Dashboard (Chart.js ou Power BI)
+🔹4 - Código para sensores reais (substituir simulação)
+🔹5 - Modelo preditivo para produtividade agrícola
+
+
+1) Script para popular o banco com dados simulados
+Abaixo há duas opções — 
+
+(A) SQL com algumas linhas de exemplo, 
+(B) script Python que gera N linhas randômicas e insere diretamente no MySQL (recomendado, porque gera muitos registros com diversidade).
+
+A — SQL (exemplo curto)
+
+INSERT INTO dados_solo (
+  latitude, longitude,
+  temperatura_solo, umidade_solo, condutividade_solo, ph, npk_n, npk_p, npk_k,
+  temperatura_ar, pressao, altitude, umidade_relativa, radiacao_solar, indice_uv, velocidade_vento, pluviometria_mm,
+  altura_planta, biomassa_estimada, area_foliar_lai,
+  cultura, estagio_fenologico, data_plantio, data_observacao, producao_kg
+) VALUES
+( -23.100, -47.200, 24.5, 35.2, 0.75, 6.4, 45, 22, 38, 27, 1012, 650, 58, 800, 6.1, 3.2, 0.0, 45, 1.2, 3.2, 'Soja','V1','2025-01-10','2025-02-15 08:00:00', NULL),
+( -23.105, -47.205, 25.1, 40.0, 0.82, 6.1, 48, 24, 40, 26.5, 1010, 655, 62, 900, 7.0, 2.8, 0.5, 60, 1.5, 3.8, 'Soja','V3','2025-01-10','2025-02-16 09:00:00', 520.0);
+
+B — Python (gera e injeta N registros) — recomendado
+Salve como popular_simulado.py e ajuste DB_* antes de rodar.
+# popular_simulado.py
+import random, datetime, mysql.connector
+from math import fabs
+
+DB_HOST='localhost'
+DB_USER='seu_usuario'
+DB_PASS='sua_senha'
+DB_NAME='iot_db'
+
+def randf(a,b): return round(random.uniform(a,b),3)
+
+def gera_registro(cultura='Soja', plantio_date='2025-01-10'):
+    lat = randf(-23.25, -22.90)
+    lon = randf(-47.30, -46.80)
+    temperatura_solo = randf(15, 35)
+    umidade_solo = randf(5, 70)
+    condutividade_solo = randf(0.05, 1.5)
+    ph = randf(4.5, 8.0)
+    npk_n = randf(10,80)
+    npk_p = randf(5,50)
+    npk_k = randf(10,80)
+    temperatura_ar = randf(10,38)
+    pressao = randf(980,1030)
+    altitude = randf(400,900)
+    umidade_relativa = randf(20,98)
+    radiacao_solar = randf(0,1200)
+    indice_uv = randf(0,12)
+    velocidade_vento = randf(0,18)
+    pluviometria_mm = randf(0,50)
+    altura_planta = randf(0,150)            # cm
+    biomassa_estimada = randf(0.01,8.0)     # kg/m2 (exemplo)
+    area_foliar_lai = randf(0.1,6.5)
+    estag = random.choice(['V0','V1','V2','V3','V4','R1','R2','R3','R4','R5','R6','R7','R8'])
+    data_plantio = plantio_date
+    data_observacao = (datetime.datetime.now() - datetime.timedelta(days=random.randint(0,120))).strftime('%Y-%m-%d %H:%M:%S')
+    producao_kg = None if random.random() < 0.7 else round(randf(200,1500),2)  # 30% têm produção preenchida
+    return (
+        lat, lon, temperatura_solo, umidade_solo, condutividade_solo, ph, npk_n, npk_p, npk_k,
+        temperatura_ar, pressao, altitude, umidade_relativa, radiacao_solar, indice_uv, velocidade_vento, pluviometria_mm,
+        altura_planta, biomassa_estimada, area_foliar_lai, 'Soja', estag, data_plantio, data_observacao, producao_kg
+    )
+
+def inserir_n(n=1000):
+    conn = mysql.connector.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_NAME)
+    cur = conn.cursor()
+    sql = """INSERT INTO dados_solo (
+      latitude, longitude, temperatura_solo, umidade_solo, condutividade_solo, ph, npk_n, npk_p, npk_k,
+      temperatura_ar, pressao, altitude, umidade_relativa, radiacao_solar, indice_uv, velocidade_vento, pluviometria_mm,
+      altura_planta, biomassa_estimada, area_foliar_lai, cultura, estagio_fenologico, data_plantio, data_observacao, producao_kg
+    ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    for i in range(n):
+        cur.execute(sql, gera_registro())
+    conn.commit()
+    cur.close()
+    conn.close()
+    print(f"{n} registros inseridos.")
+
+if __name__ == "__main__":
+    inserir_n(2000)  # ajuste N conforme desejar
+
+
+2) Rotina Python: busca do banco e cálculos estatísticos
+
+Instale as libs: pip install pandas mysql-connector-python scipy statsmodels scikit-learn matplotlib seaborn
+
+Salve como analise_estatistica.py.
+# analise_estatistica.py
+import mysql.connector
+import pandas as pd
+import numpy as np
+from scipy.stats import pearsonr
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_squared_error, r2_score
+
+
+# Config DB
+DB = dict(host='localhost', user='seu_usuario', password='sua_senha', database='iot_db')
+
+def carrega_dados():
+    conn = mysql.connector.connect(**DB)
+    query = "SELECT * FROM dados_solo"
+    df = pd.read_sql(query, conn)
+    conn.close()
+    return df
+
+def correlacoes(df, target='producao_kg'):
+    vars = ['temperatura_solo','umidade_solo','condutividade_solo','ph','npk_n','npk_p','npk_k',
+            'temperatura_ar','pressao','umidade_relativa','radiacao_solar','indice_uv','velocidade_vento','pluviometria_mm',
+            'altura_planta','biomassa_estimada','area_foliar_lai']
+    results = {}
+    df2 = df.dropna(subset=[target])
+    for v in vars:
+        if v in df2.columns and df2[v].notnull().sum() > 2:
+            try:
+                corr, p = pearsonr(df2[v], df2[target])
+                results[v] = (corr, p)
+            except Exception as e:
+                results[v] = (np.nan, np.nan)
+    return results
+
+def regressao_linear_simples(df, xvar, target='producao_kg'):
+    df2 = df.dropna(subset=[xvar, target])
+    X = df2[[xvar]].values
+    y = df2[target].values
+    model = LinearRegression().fit(X,y)
+    ypred = model.predict(X)
+    return {'coef': model.coef_[0], 'intercept': model.intercept_, 'r2': model.score(X,y)}
+
+def regressao_multipla(df, features, target='producao_kg'):
+    df2 = df.dropna(subset=features+[target])
+    X = df2[features]
+    y = df2[target]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    pipeline = Pipeline([('scaler', StandardScaler()), ('reg', RandomForestRegressor(n_estimators=100, random_state=42))])
+    pipeline.fit(X_train, y_train)
+    ypred = pipeline.predict(X_test)
+    return {
+        'rmse': mean_squared_error(y_test, ypred, squared=False),
+        'r2': r2_score(y_test, ypred),
+        'feature_importances': pipeline.named_steps['reg'].feature_importances_
+    }
+
+def anova_example(df, target='producao_kg'):
+    # ANOVA: efeito do estágio fenológico sobre a produção (exemplo)
+    df2 = df.dropna(subset=[target, 'estagio_fenologico'])
+    model = ols(f'{target} ~ C(estagio_fenologico)', data=df2).fit()
+    aov_table = sm.stats.anova_lm(model, typ=2)
+    return aov_table
+
+if __name__ == "__main__":
+    df = carrega_dados()
+    print("Tamanho do dataset:", df.shape)
+
+    # Correlações
+    corr = correlacoes(df)
+    print("Correlação (pearson) com produção (apenas variáveis com p calculado):")
+    for k,(c,p) in corr.items():
+        print(f" {k}: corr={c:.3f} p={p:.4f}")
+
+    # Regressão linear simples (exemplo com umidade do solo)
+    rl = regressao_linear_simples(df,'umidade_solo')
+    print("Regressão linear simples (umidade_solo):", rl)
+
+    # Regressão múltipla
+    features = ['umidade_solo','temperatura_solo','ph','npk_n','pluviometria_mm','area_foliar_lai']
+    rm = regressao_multipla(df, features)
+    print("Regressão múltipla (RandomForest) - RMSE, R2:", rm['rmse'], rm['r2'])
+    print("Importâncias:", dict(zip(features, rm['feature_importances'])))
+
+    # ANOVA
+    try:
+        aov = anova_example(df)
+        print("ANOVA por estagio_fenologico:\n", aov)
+    except Exception as e:
+        print("ANOVA falhou:", e)
+Observações: ajuste features conforme variáveis disponíveis no seu dataset. A regressão múltipla aqui usa RandomForest como baseline; você pode trocar por LinearRegression() para modelo linear.
+
+
+3) Dashboard — template Flask + Chart.js (front-end)
+
+Estrutura:
+dashboard/
+ ├ app.py
+ └ templates/
+    └ index.html
+
+dashboard/app.py
+from flask import Flask, render_template, jsonify
+import mysql.connector
+import pandas as pd
+
+app = Flask(__name__)
+DB = dict(host='localhost', user='seu_usuario', password='sua_senha', database='iot_db')
+
+def get_latest(n=100):
+    conn = mysql.connector.connect(**DB)
+    df = pd.read_sql("SELECT * FROM dados_solo ORDER BY data_observacao DESC LIMIT %s", conn, params=(n,))
+    conn.close()
+    return df
+
+@app.route('/')
+def index():
+    df = get_latest(200)
+    return render_template('index.html', data=df.to_dict(orient='records'))
+
+@app.route('/api/series')
+def api_series():
+    df = get_latest(500)
+    df['data_observacao'] = pd.to_datetime(df['data_observacao']).astype(str)
+    return jsonify(df.to_dict(orient='records'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+dashboard/templates/index.html (Chart.js)
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Dashboard IoT - Solo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <h1>Dashboard IoT - Dados do Solo</h1>
+    <canvas id="chartUmidade" width="900" height="300"></canvas>
+    <canvas id="chartProducao" width="900" height="300"></canvas>
+
+    <script>
+      fetch('/api/series').then(r=>r.json()).then(data=>{
+        const labels = data.map(d=>d.data_observacao).reverse();
+        const umidade = data.map(d=>d.umidade_solo).reverse();
+        const producao = data.map(d=>d.producao_kg || 0).reverse();
+
+        const ctx1 = document.getElementById('chartUmidade').getContext('2d');
+        new Chart(ctx1, {
+          type: 'line',
+          data: { labels, datasets: [{ label:'Umidade do Solo (%)', data:umidade, fill:false }] },
+          options:{ responsive:true }
+        });
+
+        const ctx2 = document.getElementById('chartProducao').getContext('2d');
+        new Chart(ctx2, {
+          type: 'line',
+          data: { labels, datasets: [{ label:'Produção (kg)', data:producao, fill:false }] },
+          options:{ responsive:true }
+        });
+      });
+    </script>
+  </body>
+</html>
+
+
+4) Código ESP32 para sensores reais (exemplos e placeholders)
+Este exemplo combina leituras de sensores comuns:
+
+•	DS18B20 (temperatura do solo)
+•	Sensor capacitivo de umidade (analog)
+•	Sensor pH (módulo analógico com calibragem)
+•	Sensor de condutividade (EC analog)
+•	LDR/si ou módulo de radiação (exemplo placeholder)
+•	Anemômetro (pulsos digitais) — placeholder
+•	Pluviômetro (pulsos digitais)
+Observação: versões de sensores e ligação dependem do módulo físico — código mostrado para referência: substituir pinos conforme seu hardware.
+
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+// WiFi
+const char* ssid = "SEU_WIFI";
+const char* password = "SUA_SENHA";
+const char* serverName = "http://SEU_IP:5000/api/solo";
+
+// DS18B20
+#define ONE_WIRE_BUS 4
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+
+// Pinos (ajuste conforme seu circuito)
+const int PIN_SOIL_CAP = 34;   // ADC pin for capacitive soil moisture
+const int PIN_PH = 35;         // ADC pin for pH sensor
+const int PIN_EC = 32;         // ADC pin for conductivity (EC) sensor
+const int PIN_RAD = 33;        // ADC pin for solar radiation sensor (placeholder)
+const int PIN_ANEM = 25;       // digital pulse from anemometer (needs interrupt)
+const int PIN_PLUV = 26;       // digital pulse from pluviometer (needs interrupt)
+const int PIN_ALTITUDE = 0;    // placeholder if using BMP sensor via I2C
+
+volatile int anem_pulses = 0;
+volatile int pluv_pulses = 0;
+
+void IRAM_ATTR anemISR() { anem_pulses++; }
+void IRAM_ATTR pluvISR() { pluv_pulses++; }
+
+float readADC(int pin) {
+  int raw = analogRead(pin);
+  float voltage = (raw / 4095.0) * 3.3;
+  return voltage;
+}
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid,password);
+  Serial.print("Conectando WiFi");
+  while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
+  Serial.println("OK");
+
+  sensors.begin();
+  pinMode(PIN_ANEM, INPUT_PULLUP);
+  pinMode(PIN_PLUV, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(PIN_ANEM), anemISR, RISING);
+  attachInterrupt(digitalPinToInterrupt(PIN_PLUV), pluvISR, RISING);
+}
+
+void loop() {
+  // Leitura sensores
+  sensors.requestTemperatures();
+  float temperatura_solo = sensors.getTempCByIndex(0); // DS18B20
+
+  float soil_cap_voltage = readADC(PIN_SOIL_CAP); // converter p/ % com calibração
+  float umidade_solo = map(soil_cap_voltage*1000, 300, 2000, 100, 0); // exemplo (calibrar)
+
+  float ph_voltage = readADC(PIN_PH);
+  float ph = (ph_voltage * 3.5); // placeholder; calibrar com fórmula e pontos
+
+  float ec_voltage = readADC(PIN_EC);
+  float condutividade_solo = ec_voltage * 1.5; // placeholder
+
+  float rad_voltage = readADC(PIN_RAD);
+  float radiacao_solar = rad_voltage * 500.0; // placeholder
+
+  // Anemômetro: conversão de pulsos -> velocidade (depende do sensor)
+  int pulses = anem_pulses;
+  anem_pulses = 0;
+  float velocidade_vento = pulses * 0.5; // placeholder
+
+  int pluvi = pluv_pulses;
+  pluv_pulses = 0;
+  float pluviometria_mm = pluvi * 0.2794; // ex: cada pulso = 0.2794 mm (calibrar)
+
+  // Temperatura e umidade do ar e pressão via BMP/BME (I2C)
+  float temperatura_ar = 26.0; // colocar leitura real do BME280/BMP280
+  float pressao = 1012.0;
+  float altitude = 600.0;
+  float umidade_relativa = 65.0;
+  float indice_uv = 3.0;
+  float npk_n = 35.0, npk_p = 18.0, npk_k = 40.0; // se tiver sensor NPK (ou calcular por amostra)
+  float altura_planta = 30.0, biomassa_estimada = 1.2, area_foliar_lai = 2.1;
+
+  String json = "{";
+  json += "\"latitude\": -23.10,";
+  json += "\"longitude\": -47.20,";
+  json += "\"temperatura_solo\":" + String(temperatura_solo) + ",";
+  json += "\"umidade_solo\":" + String(umidade_solo) + ",";
+  json += "\"condutividade_solo\":" + String(condutividade_solo) + ",";
+  json += "\"ph\":" + String(ph) + ",";
+  json += "\"npk_n\":" + String(npk_n) + ",";
+  json += "\"npk_p\":" + String(npk_p) + ",";
+  json += "\"npk_k\":" + String(npk_k) + ",";
+  json += "\"temperatura_ar\":" + String(temperatura_ar) + ",";
+  json += "\"pressao\":" + String(pressao) + ",";
+  json += "\"altitude\":" + String(altitude) + ",";
+  json += "\"umidade_relativa\":" + String(umidade_relativa) + ",";
+  json += "\"radiacao_solar\":" + String(radiacao_solar) + ",";
+  json += "\"indice_uv\":" + String(indice_uv) + ",";
+  json += "\"velocidade_vento\":" + String(velocidade_vento) + ",";
+  json += "\"pluviometria_mm\":" + String(pluviometria_mm) + ",";
+  json += "\"altura_planta\":" + String(altura_planta) + ",";
+  json += "\"biomassa_estimada\":" + String(biomassa_estimada) + ",";
+  json += "\"area_foliar_lai\":" + String(area_foliar_lai) + ",";
+  json += "\"cultura\":\"Soja\",";
+  json += "\"estagio_fenologico\":\"V3\",";
+  json += "\"data_plantio\":\"2025-01-10\"";
+  json += "}";
+
+  // Envia via HTTP
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(serverName);
+    http.addHeader("Content-Type", "application/json");
+    int code = http.POST(json);
+    Serial.println("POST -> code: " + String(code));
+    http.end();
+  }
+  delay(60000); // intervalo
+}
+Calibração: Cada sensor analógico (umidade capacitiva, pH, EC, pluviômetro/anemômetro) precisa de calibração laboratorial (valores de referência)
+e conversões corretas. Coloque fórmulas/calibrações reais quando tiver medidas de laboratório.
+
+5) Modelo preditivo para produtividade agrícola
+Abaixo um pipeline em Python (scikit-learn) com validação cruzada — salve como modelo_producao.py.
+
+# modelo_producao.py
+import mysql.connector
+import pandas as pd
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error, r2_score
+import joblib
+
+DB = dict(host='localhost', user='seu_usuario', password='sua_senha', database='iot_db')
+
+def load_data():
+    conn = mysql.connector.connect(**DB)
+    df = pd.read_sql("SELECT * FROM dados_solo WHERE producao_kg IS NOT NULL", conn)
+    conn.close()
+    return df
+
+if __name__ == "__main__":
+    df = load_data()
+    # features possíveis
+    features = ['umidade_solo','temperatura_solo','ph','npk_n','npk_p','npk_k','pluviometria_mm','radiacao_solar','area_foliar_lai','altura_planta']
+    df = df.dropna(subset=features+['producao_kg'])
+    X = df[features]
+    y = df['producao_kg']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    pipeline = Pipeline([
+        ('scaler', StandardScaler()),
+        ('model', RandomForestRegressor(random_state=42, n_estimators=200))
+    ])
+
+    pipeline.fit(X_train, y_train)
+    ypred = pipeline.predict(X_test)
+    print("RMSE:", mean_squared_error(y_test, ypred, squared=False))
+    print("R2:", r2_score(y_test, ypred))
+
+    # importância de features (RandomForest)
+    importances = pipeline.named_steps['model'].feature_importances_
+    print(dict(zip(features, importances)))
+
+    # salvar modelo
+    joblib.dump(pipeline, 'modelo_producao_rf.pkl')
+    print("Modelo salvo em modelo_producao_rf.pkl")
+
+6) Checklist prático para rodar tudo (resumo rápido)
+
+  6.1	Criar as tabelas no MySQL (dados_solo e estagios_culturas).
+  6.2	Ajustar credenciais nos scripts Python e Flask.
+  6.3	Rodar popular_simulado.py para gerar dados (ou executar SQL).
+  6.4	Rodar analise_estatistica.py para ver correlações, regressões e ANOVA.
+  6.5	Subir o dashboard/app.py e abrir http://SEU_IP:5000/.
+  6.6	Colocar o ESP32 com o código de sensores reais (calibrar) e apontar serverName para a API Flask.
+  6.7	Treinar o modelo modelo_producao.py com registros que tenham producao_kg não nulo.
+
+
