@@ -1,192 +1,78 @@
-Aula 1 — Introdução ao Arduino e Comunicação Serial
-Curso: Internet das Coisas (IoT)
-1. Objetivos da Aula
+# Aula 1 — Introdução ao Arduino e Comunicação Serial
+### Curso: Internet das Coisas (IoT)
+
+---
+
+## 1. Objetivos da Aula
 
 Ao final desta aula o aluno deverá ser capaz de:
 
-Compreender o que é o Arduino
+- Compreender o que é o **Arduino**
+- Entender a estrutura de um programa Arduino
+- Utilizar o **Tinkercad** para simulação
+- Exportar código do Tinkercad
+- Compilar código no **Arduino IDE**
+- Utilizar comunicação serial
 
-Entender a estrutura de um programa Arduino
+---
 
-Utilizar o Tinkercad para simulação
+## 2. Estrutura de um programa Arduino
 
-Exportar código do Tinkercad
+Todo programa Arduino possui duas funções principais:
 
-Compilar o código no Arduino IDE
-
-Utilizar a comunicação serial
-
-Utilizar os comandos:
-
-Serial.begin()
-Serial.print()
-Serial.println()
-2. O que é Arduino?
-
-O Arduino é uma plataforma de prototipagem eletrônica composta por:
-
-Hardware (placa microcontroladora)
-
-Software (ambiente de programação)
-
-Ele é amplamente utilizado em projetos de:
-
-Internet das Coisas
-
-Automação
-
-Robótica
-
-Sistemas embarcados
-
-Prototipagem de produtos
-
-3. Componentes principais da placa Arduino
-
-Uma placa Arduino possui diversos componentes importantes:
-
-Microcontrolador
-
-É o "cérebro" da placa, responsável por executar o programa.
-
-Portas Digitais
-
-Permitem ler ou enviar sinais digitais (0 ou 1).
-
-Portas Analógicas
-
-Permitem ler sensores com valores variados.
-
-Porta USB
-
-Utilizada para:
-
-programar a placa
-
-alimentar o circuito
-
-comunicação com o computador
-
-Regulador de tensão
-
-Controla a energia recebida pela placa.
-
-4. Ambiente de desenvolvimento
-
-Nesta aula utilizamos duas ferramentas principais:
-
-Tinkercad
-
-Permite:
-
-simular circuitos
-
-programar Arduino online
-
-testar projetos sem hardware físico
-
-https://www.tinkercad.com
-
-Arduino IDE
-
-Utilizado para:
-
-escrever código
-
-compilar programas
-
-enviar código para a placa
-
-https://www.arduino.cc/en/software
-
-5. Estrutura de um programa Arduino
-
-Todo programa Arduino possui duas funções principais.
-
-Função setup()
-
-Executa uma única vez quando a placa é ligada.
-
-void setup() {
+```cpp
+void setup(){
 
 }
 
-Usos comuns:
+void loop(){
+
+}
+Função setup()
+
+Executa uma única vez quando o Arduino é ligado.
+
+Usado para:
 
 iniciar comunicação serial
 
 configurar pinos
 
-iniciar sensores
+inicializar sensores
 
 Função loop()
 
-Executa continuamente enquanto o Arduino estiver ligado.
+Executa continuamente enquanto a placa estiver ligada.
 
-void loop() {
-
-}
-
-É onde fica a lógica principal do programa.
-
-6. Fluxo de desenvolvimento utilizado
-
-Fluxo utilizado durante a aula:
-
-Tinkercad → Exportar código → Arduino IDE → Compilar → Upload
-
-Etapas:
-
-Criar circuito no Tinkercad
-
-Programar
-
-Exportar código
-
-Abrir no Arduino IDE
-
-Compilar
-
-Enviar para a placa
-
-7. Comunicação Serial
+3. Comunicação Serial
 
 A comunicação serial permite que o Arduino envie dados para o computador.
 
 Ela é usada para:
 
-depuração de programas
+monitorar sensores
 
-monitoramento de sensores
+depurar programas
 
-comunicação com outros dispositivos
+enviar informações para o monitor serial
 
-8. Inicializando a comunicação serial
-
-Para iniciar a comunicação utilizamos:
-
+4. Inicializando a comunicação serial
 Serial.begin(9600);
 
-O número 9600 representa a velocidade da comunicação (baud rate).
+O valor 9600 representa a velocidade da comunicação (baud rate).
 
-9. Enviando dados pela serial
-
-Existem dois comandos principais.
-
+5. Comandos de impressão
 Serial.print()
 
-Imprime dados sem quebrar linha.
+Imprime sem quebrar linha.
 
 Serial.print("Texto");
 Serial.println()
 
-Imprime dados quebrando linha.
+Imprime e quebra a linha.
 
 Serial.println("Texto");
-10. Exemplo utilizado na aula
-
-Programa apresentado:
-
+6. Código apresentado na aula
 int cont = 0;
 
 void setup() {
@@ -194,6 +80,7 @@ void setup() {
 }
 
 void loop() {
+
   delay(1000);
 
   Serial.print("Contador = ");
@@ -201,78 +88,27 @@ void loop() {
 
   cont++;
 }
-11. Explicação do código
-Variável
-int cont = 0;
-
-Cria uma variável chamada cont iniciando com valor 0.
-
-Inicialização da serial
-Serial.begin(9600);
-
-Inicia comunicação com o computador.
-
-Delay
-delay(1000);
-
-Pausa o programa por 1 segundo.
-
-Impressão de dados
-Serial.print("Contador = ");
-Serial.println(cont);
-
-Saída no Monitor Serial:
-
+7. Resultado no Monitor Serial
 Contador = 0
 Contador = 1
 Contador = 2
 Contador = 3
-12. Exercício 1
+8. Exercícios
+Exercício 1
 
-Modifique o programa para que o contador aumente de 2 em 2.
+Modificar o programa para que o contador aumente de 2 em 2.
 
-Resultado esperado:
+Exercício 2
 
-Contador = 0
-Contador = 2
-Contador = 4
-Contador = 6
-13. Exercício 2
-
-Modifique o programa para imprimir:
+Modificar o programa para imprimir:
 
 Sistema iniciado
 Contador = X
-14. Exercício 3
+Exercício 3
 
-Crie um contador que reinicie quando chegar em 10.
+Criar um contador que reinicie quando chegar em 10.
 
-Exemplo esperado:
-
-Contador = 0
-Contador = 1
-...
-Contador = 10
-Contador = 0
-15. Conclusão da aula
-
-Nesta aula aprendemos:
-
-Estrutura de um programa Arduino
-
-Uso do Tinkercad
-
-Exportação de código
-
-Compilação no Arduino IDE
-
-Comunicação serial
-
-Uso de variáveis
-
-Uso de Serial.print e Serial.println
-
-16. Próxima aula
+Próxima aula
 
 Na próxima aula veremos:
 
@@ -280,6 +116,6 @@ Portas digitais
 
 Acionamento de LED
 
-Uso do pinMode()
+pinMode()
 
-Uso do digitalWrite()
+digitalWrite()
