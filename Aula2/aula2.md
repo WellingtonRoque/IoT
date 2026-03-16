@@ -469,8 +469,6 @@ Serial.parseInt();
 
 ---
 
-# Projeto no TINKERCAD
-https://www.tinkercad.com/things/3qeQtsfi1x7-comserial/editel?returnTo=https%3A%2F%2Fwww.tinkercad.com%2Fdashboard%2Fdesigns%2Fall&sharecode=MQBcX9pFJGAOf6R0KGCK5CfMy0ldOKrbgU2X0lHmQlY
 
 # Próxima aula
 
@@ -480,3 +478,6 @@ Na próxima aula veremos:
 - Uso de `pinMode()`
 - Uso de `digitalWrite()`
 - Controle de LEDs
+
+# Link do projeto no TINKERCAD
+https://www.tinkercad.com/things/3qeQtsfi1x7-comserial/editel?returnTo=https%3A%2F%2Fwww.tinkercad.com%2Fdashboard%2Fdesigns%2Fall&sharecode=MQBcX9pFJGAOf6R0KGCK5CfMy0ldOKrbgU2X0lHmQlY
