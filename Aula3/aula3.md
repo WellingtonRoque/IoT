@@ -266,3 +266,6 @@ Na próxima aula veremos:
 - leitura de sensores analógicos
 - sensor de luz (LDR)
 - uso de `analogRead()`
+
+# Link do projeto no TINKERCAD
+https://www.tinkercad.com/things/0FAk1KihvQX-sensores-digitais/editel?returnTo=https%3A%2F%2Fwww.tinkercad.com%2Fdashboard%2Fdesigns%2Fall&sharecode=DI9E_s1l7-GTDcIxIPmNHhA3tMfMYoKCQqSos3ieAGw
