@@ -3,7 +3,7 @@
 
 ---
 
-## 1. Objetivos da Aula
+## Objetivos da Aula
 
 Ao final desta aula o aluno deverá ser capaz de:
 
@@ -16,7 +16,7 @@ Ao final desta aula o aluno deverá ser capaz de:
 
 ---
 
-## 2. Estrutura de um programa Arduino
+## Estrutura de um programa Arduino
 
 Todo programa Arduino possui duas funções principais:
 
@@ -28,9 +28,10 @@ void setup(){
 void loop(){
 
 }
+
 Função setup()
 
-Executa uma única vez quando o Arduino é ligado.
+Executa uma única vez quando o Arduino inicia.
 
 Usado para:
 
@@ -38,30 +39,30 @@ iniciar comunicação serial
 
 configurar pinos
 
-inicializar sensores
+iniciar sensores
 
 Função loop()
 
-Executa continuamente enquanto a placa estiver ligada.
+Executa continuamente enquanto o Arduino estiver ligado.
 
-3. Comunicação Serial
+Comunicação Serial
 
 A comunicação serial permite que o Arduino envie dados para o computador.
 
 Ela é usada para:
 
-monitorar sensores
+monitoramento de sensores
 
-depurar programas
+depuração de programas
 
-enviar informações para o monitor serial
+comunicação entre dispositivos
 
-4. Inicializando a comunicação serial
+Inicializando a comunicação serial
 Serial.begin(9600);
 
-O valor 9600 representa a velocidade da comunicação (baud rate).
+O valor 9600 representa a velocidade da comunicação.
 
-5. Comandos de impressão
+Comandos de impressão
 Serial.print()
 
 Imprime sem quebrar linha.
@@ -72,7 +73,7 @@ Serial.println()
 Imprime e quebra a linha.
 
 Serial.println("Texto");
-6. Código apresentado na aula
+Código apresentado na aula
 int cont = 0;
 
 void setup() {
@@ -88,12 +89,12 @@ void loop() {
 
   cont++;
 }
-7. Resultado no Monitor Serial
+Resultado no Monitor Serial
 Contador = 0
 Contador = 1
 Contador = 2
 Contador = 3
-8. Exercícios
+Exercícios
 Exercício 1
 
 Modificar o programa para que o contador aumente de 2 em 2.
