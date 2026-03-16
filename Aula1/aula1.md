@@ -245,3 +245,6 @@ Na próxima aula veremos:
 - Acionamento de LED
 - pinMode()
 - digitalWrite()
+
+## Link do projeto no TINKERCAD
+https://www.tinkercad.com/things/bVNF6n25m3P-ola-mundo/editel?returnTo=https%3A%2F%2Fwww.tinkercad.com%2Fdashboard%2Fdesigns%2Fall&sharecode=l-Z7m2s7YHk2HPpPJSdl4pDRvR3EivwWxiqVzzox_h8
